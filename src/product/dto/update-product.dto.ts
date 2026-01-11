@@ -1,4 +1,6 @@
 export class UpdateProductDto {
-  name?: string;
-  price?: number;
+  product: string;
+  price: number;
+  number: number;
+  id: number;
 }

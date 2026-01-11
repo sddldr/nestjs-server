@@ -1,33 +1,55 @@
 import { Injectable } from '@nestjs/common';
+import { PrismaService } from '@/prisma/prisma.service';
+import { ProjectStatus } from '@prisma/client';
 
 @Injectable()
 export class ProductService {
-  private products = [
-    { id: 1, product: 'iPhone', price: 999, number: 10 },
-    { id: 2, product: 'MacBook', price: 1999, number: 5 },
-  ];
+  constructor(private prisma: PrismaService) {}
 
   findAll() {
-    return this.products;
-  }
-
-  create(product) {
-    this.products.push({
-      ...product,
-      id: Date.now(),
+    return this.prisma.project.findMany({
+      where: { status: ProjectStatus.ACTIVE },
     });
-    return { success: true };
   }
 
-  update(id: number, product) {
-    this.products = this.products.map((p) =>
-      p.id === id ? { ...p, ...product } : p,
-    );
-    return { success: true };
+  create(dto: {
+    product: string;
+    price: number;
+    number: number;
+    description?: string;
+  }) {
+    return this.prisma.project.create({
+      data: {
+        product: dto.product,
+        price: dto.price,
+        number: dto.number,
+        description: dto.description,
+        // ownerId: userId,
+        status: ProjectStatus.ACTIVE,
+      },
+    });
+  }
+
+  update(
+    dto: Partial<{
+      product: string;
+      price: number;
+      number: number;
+      status: ProjectStatus;
+      description: string;
+      id: number;
+    }>,
+  ) {
+    return this.prisma.project.updateMany({
+      where: { id: dto.id },
+      data: dto,
+    });
   }
 
   remove(id: number) {
-    this.products = this.products.filter((p) => p.id !== id);
-    return { success: true };
+    return this.prisma.project.updateMany({
+      where: { id },
+      data: { status: ProjectStatus.DELETED },
+    });
   }
 }

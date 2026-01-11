@@ -1,0 +1,17 @@
+启动mysql
+mysql.server start
+
+连接mysql数据库
+mysql -u root -p
+// mysql -u root -p -h 127.0.0.1
+
+CREATE DATABASE nestjs_product DEFAULT CHARSET utf8mb4;
+
+SHOW DATABASES;
+
+pnpm prisma migrate dev --name init
+
+npx prisma generate
+
+查看机器上都有哪些服务
+brew services list
